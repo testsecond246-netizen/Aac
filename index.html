@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AAC Kids</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+<button onclick="speak('Oke')">👍<br>Oke</button>
+<button onclick="speak('Tidak')">❌<br>Tidak</button>
+<button onclick="speak('Makan')">🍽️<br>Makan</button>
+<button onclick="speak('Minum')">🥤<br>Minum</button>
+<button onclick="speak('Toilet')">🚽<br>Toilet</button>
+
+<script>
+function speak(text) {
+  let voice = new SpeechSynthesisUtterance(text);
+  voice.lang = "id-ID";
+  speechSynthesis.speak(voice);
+}
+</script>
+
+</body>
+</html>
