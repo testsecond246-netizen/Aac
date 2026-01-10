@@ -1,0 +1,9 @@
+function speak(btn) {
+  if (btn.audio) {
+    const audio = new Audio(btn.audio);
+    audio.play();
+  } else {
+    const utterance = new SpeechSynthesisUtterance(btn.text);
+    speechSynthesis.speak(utterance);
+  }
+}

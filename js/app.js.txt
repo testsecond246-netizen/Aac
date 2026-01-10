@@ -1,0 +1,205 @@
+document.addEventListener("DOMContentLoaded", loadLockState();
+ async () => {
+  await initDB();
+
+ const sampleFolders = [
+  { id: "Food", name: "Food", parent: "root" },
+  { id: "Needs", name: "Needs", parent: "root" },
+  { id: "Feelings", name: "Feelings", parent: "root" }
+];
+
+const sampleButtons = [
+  { id: "1", text: "Makan", folder: "Food", size: "medium" },
+  { id: "2", text: "Minum", folder: "Food", size: "medium" },
+  { id: "3", text: "Mau", folder: "Needs", size: "medium" },
+  { id: "4", text: "Pipis", folder: "Needs", size: "medium" },
+  { id: "5", text: "Saya", folder: "root", size: "medium" }
+];
+
+for (let f of sampleFolders) await saveItem("folders", f);
+for (let b of sampleButtons) await saveItem("buttons", b);
+
+const createModal = document.getElementById("createModal");
+const createFolderBtn = document.getElementById("createFolderBtn");
+const createButtonBtn = document.getElementById("createButtonBtn");
+const createForm = document.getElementById("createForm");
+const createChoice = document.getElementById("createChoice");
+const createText = document.getElementById("createText");
+const createColor = document.getElementById("createColor");
+const createSize = document.getElementById("createSize");
+const createImage = document.getElementById("createImage");
+const createAudio = document.getElementById("createAudio");
+const saveCreateBtn = document.getElementById("saveCreateBtn");
+const cancelCreateBtn = document.getElementById("cancelCreateBtn");
+
+let createType = null;
+
+// Open modal
+addBtn.addEventListener("click", () => {
+  if (isLocked) return;
+  createModal.classList.remove("hidden");
+  createChoice.classList.remove("hidden");
+  createForm.classList.add("hidden");
+  createType = null;
+});
+
+// Choose Folder
+createFolderBtn.addEventListener("click", () => {
+  createType = "folder";
+  createChoice.classList.add("hidden");
+  createForm.classList.remove("hidden");
+
+  // Hide image/audio/size for folder
+  createSize.parentElement.style.display = "none";
+  createImage.parentElement.style.display = "none";
+  createAudio.parentElement.style.display = "none";
+});
+
+// Choose Button
+createButtonBtn.addEventListener("click", () => {
+  createType = "button";
+  createChoice.classList.add("hidden");
+  createForm.classList.remove("hidden");
+
+  createSize.parentElement.style.display = "block";
+  createImage.parentElement.style.display = "block";
+  createAudio.parentElement.style.display = "block";
+});
+
+// Cancel
+cancelCreateBtn.addEventListener("click", () => {
+  createModal.classList.add("hidden");
+  resetCreateForm();
+});
+
+// Save
+saveCreateBtn.addEventListener("click", async () => {
+  const text = createText.value.trim();
+  if (!text) {
+    alert("Please enter a name");
+    return;
+  }
+
+  if (createType === "folder") {
+    const folder = {
+      id: Date.now().toString(),
+      name: text,
+      parent: currentFolder
+    };
+    await saveItem("folders", folder);
+  }
+
+  if (createType === "button") {
+    const btn = {
+      id: Date.now().toString(),
+      text,
+      folder: currentFolder,
+      color: createColor.value,
+      size: createSize.value
+    };
+
+    if (createImage.files[0]) {
+      btn.image = await fileToBase64(createImage.files[0]);
+    }
+
+    if (createAudio.files[0]) {
+      btn.audio = await fileToBase64(createAudio.files[0]);
+    }
+
+    await saveItem("buttons", btn);
+  }
+
+  createModal.classList.add("hidden");
+  resetCreateForm();
+  loadFolder(currentFolder);
+});
+
+function resetCreateForm() {
+  createText.value = "";
+  createColor.value = "#f5f5f5";
+  createSize.value = "medium";
+  createImage.value = "";
+  createAudio.value = "";
+  createChoice.classList.remove("hidden");
+  createForm.classList.add("hidden");
+  createType = null;
+}
+
+const lockBtn = document.getElementById("lockBtn");
+let isLocked = false;
+
+// Load lock state
+function loadLockState() {
+  const saved = localStorage.getItem("aac_locked");
+  isLocked = saved === "true";
+  applyLockState();
+}
+
+// Toggle lock
+lockBtn.addEventListener("click", () => {
+  isLocked = !isLocked;
+  localStorage.setItem("aac_locked", isLocked);
+  applyLockState();
+});
+
+function applyLockState() {
+  if (isLocked) {
+    document.body.classList.add("locked");
+    lockBtn.textContent = "🔒";
+  } else {
+    document.body.classList.remove("locked");
+    lockBtn.textContent = "🔓";
+  }
+}
+
+
+  loadFolder("root");
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+});
+
+const editModal = document.getElementById("editModal");
+const editText = document.getElementById("editText");
+const editColor = document.getElementById("editColor");
+const editSize = document.getElementById("editSize");
+const editImage = document.getElementById("editImage");
+const editAudio = document.getElementById("editAudio");
+const saveEditBtn = document.getElementById("saveEditBtn");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+function openEditModal(btn) {
+  currentEditButton = btn;
+  editText.value = btn.text || "";
+  editColor.value = btn.color || "#f5f5f5";
+  editSize.value = btn.size || "medium";
+  editImage.value = "";
+  editAudio.value = "";
+  editModal.classList.remove("hidden");
+}
+
+cancelEditBtn.onclick = () => {
+  editModal.classList.add("hidden");
+  currentEditButton = null;
+};
+
+saveEditBtn.onclick = async () => {
+  if (!currentEditButton) return;
+
+  currentEditButton.text = editText.value;
+  currentEditButton.color = editColor.value;
+  currentEditButton.size = editSize.value;
+
+  if (editImage.files[0]) {
+    currentEditButton.image = awaitfileToBase64(editImage.files[0]);
+  }
+
+  if (editAudio.files[0]) {
+    currentEditButton.audio = await fileToBase64(editAudio.files[0]);
+  }
+
+  await saveItem("buttons", currentEditButton);
+  editModal.classList.add("hidden");
+  loadFolder(currentFolder);
+};

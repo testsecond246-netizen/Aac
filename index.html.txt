@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AAC App</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <button id="menuBtn" class="icon-btn">☰</button>
+    <h1 class="app-title">AAC</h1>
+    <button id="addBtn" class="icon-btn">＋</button>
+  </header>
+
+  <!-- Sentence Bar (like Saya Mau Pipis) -->
+  <section id="sentenceBar" class="sentence-bar"></section>
+
+  <!-- Grid Area -->
+  <main id="grid" class="grid-container">
+    <!-- Buttons injected by JS -->
+  </main>
+
+  <!-- Hidden file inputs -->
+  <input type="file" id="imageInput" accept="image/*" hidden>
+  <input type="file" id="audioInput" accept="audio/*" hidden>
+
+  <script src="js/storage.js"></script>
+  <script src="js/folders.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+<!-- Edit Modal -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Edit Button</h2>
+
+    <label>Text</label>
+    <input type="text" id="editText">
+
+    <label>Background Color</label>
+    <input type="color" id="editColor">
+
+    <label>Button Size</label>
+    <select id="editSize">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select>
+
+    <label>Image</label>
+    <input type="file" id="editImage" accept="image/*">
+
+    <label>Sound</label>
+    <input type="file" id="editAudio" accept="audio/*">
+
+    <div class="modal-actions">
+      <button id="saveEditBtn">Save</button>
+      <button id="cancelEditBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

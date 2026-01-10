@@ -1,0 +1,33 @@
+const grid = document.getElementById("grid");
+const sentenceBar = document.getElementById("sentenceBar");
+
+function renderButtons(buttons) {
+  grid.innerHTML = "";
+  buttons.forEach(btn => {
+    const div = document.createElement("div");
+    div.className = "aac-button";
+    div.style.background = btn.color || "#f5f5f5";
+
+    div.innerHTML = `
+      <div class="add-icon">+</div>
+      <div class="edit-icon">✎</div>
+      <img src="${btn.image || 'assets/placeholders/image-placeholder.png'}"/>
+      <div class="aac-label">${btn.text}</div>
+    `;
+
+    div.onclick = () => selectButton(btn);
+    grid.appendChild(div);
+  });
+}
+
+function selectButton(btn) {
+  addToSentence(btn);
+  speak(btn);
+}
+
+function addToSentence(btn) {
+  const chip = document.createElement("div");
+  chip.className = "sentence-chip";
+  chip.textContent = btn.text;
+  sentenceBar.appendChild(chip);
+}

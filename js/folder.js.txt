@@ -1,0 +1,9 @@
+let currentFolder = "root";
+
+function loadFolder(folderId) {
+  currentFolder = folderId;
+  getAll("buttons").then(buttons => {
+    const filtered = buttons.filter(b => b.folder === folderId);
+    renderButtons(filtered);
+  });
+}
